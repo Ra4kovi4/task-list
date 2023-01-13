@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import { Layout } from "./components/Layout/Layout";
+import { AppBar } from "./components/AppBar/AppBar";
+import { TaskForm } from "./components/TaskForm/TaskForm";
+import { TaskList } from "./components/TaskList/TaskList";
+import { useEffect } from "react";
+import { selectLoading, selectError } from "./redux/selectors";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTasks } from "./redux/operations";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+export const App = () => {
+	const dispatch = useDispatch();
+	const isLoading = useSelector(selectLoading);
+	const error = useSelector(selectError);
 
-export default App;
+	useEffect(() => {
+		dispatch(fetchTasks());
+	}, [dispatch]);
+	// return (
+	// 	<div>
+	// 		{isLoading && <b>Loading tasks...</b>}
+	// 		{error && <b>{error}</b>}
+	// 		<p>{items.length > 0 && JSON.stringify(items, null, 2)}</p>
+	// 	</div>
+	// );
+	return (
+		<Layout>
+			<AppBar />
+			<TaskForm />
+			{isLoading && !error && <b>Request in progress...</b>}
+			<TaskList />
+		</Layout>
+	);
+};
